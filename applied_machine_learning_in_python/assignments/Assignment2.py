@@ -207,10 +207,13 @@ X_train2, X_test2, y_train2, y_test2 = train_test_split(X_mush, y_mush, random_s
 def answer_five():
     from sklearn.tree import DecisionTreeClassifier
 
-    # Your code here
+    clf = DecisionTreeClassifier(random_state=0)
+    clf.fit(X_train2, y_train2)
+    important_features = pd.Series(
+        clf.feature_importances_,
+        index=X_train2.columns).sort_values(ascending=False).iloc[:5].index.tolist()
 
-    return # Your answer here
-
+    return important_features
 
 # ### Question 6
 # 
@@ -241,13 +244,23 @@ def answer_five():
 
 # In[ ]:
 
+
 def answer_six():
     from sklearn.svm import SVC
     from sklearn.model_selection import validation_curve
 
-    # Your code here
+    param_range = np.logspace(-4, 1, 6)
 
-    return # Your answer here
+    clf = SVC(random_state=0)
+    clf.fit(X_train2, y_train2)
+
+    train_scores, test_scores = validation_curve(SVC(random_state=0), X_test2, y_test2,
+                                                 param_name='gamma', param_range=param_range, cv=3)
+
+    train_scores_mean = np.mean(train_scores, axis=1)
+    test_scores_mean = np.mean(test_scores, axis=1)
+
+    return train_scores_mean, test_scores_mean
 
 
 # ### Question 7
@@ -261,8 +274,5 @@ def answer_six():
 # In[ ]:
 
 def answer_seven():
-    
-    # Your code here
-    
-    return # Return your answer
 
+    return 1e-2, 1e1, 1e-1
